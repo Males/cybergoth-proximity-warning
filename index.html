@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CYBERGOTH PROXIMITY WARNING</title>
+
+<!-- Google Fonts: Share Tech Mono for monospace, Orbitron for display headings -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   CSS RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --neon-green: #39ff14;
+  --electric-blue: #00f0ff;
+  --hot-pink: #ff2d95;
+  --dark-bg: #0a0a0a;
+  --panel-bg: #111111;
+  --border-color: #1a1a1a;
+  --text-dim: #555555;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-display: 'Orbitron', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: var(--dark-bg);
+  color: var(--neon-green);
+  font-family: var(--font-mono);
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   CRT SCANLINE OVERLAY
+   Covers the entire viewport with a repeating horizontal line
+   pattern to simulate an old CRT monitor.
+   ============================================================ */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* Subtle vignette effect around edges */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  position: relative;
+}
+
+/* ============================================================
+   HEADER / TITLE
+   ============================================================ */
+.title-block {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title-block h1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.4rem, 5vw, 2.8rem);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--neon-green);
+  text-shadow:
+    0 0 7px var(--neon-green),
+    0 0 20px var(--neon-green),
+    0 0 40px rgba(57, 255, 20, 0.4);
+  animation: titleFlicker 4s infinite;
+}
+
+.title-block .subtitle {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+/* ============================================================
+   MAIN PANEL — the "surveillance software" frame
+   ============================================================ */
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--neon-green);
+  box-shadow:
+    0 0 10px rgba(57, 255, 20, 0.15),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+  padding: 2rem 2.5rem;
+  max-width: 520px;
+  width: 100%;
+  position: relative;
+}
+
+/* Corner decoration — top left */
+.panel::before {
+  content: '▸ SYS.BRIDGE_SCAN v0.6.66';
+  position: absolute;
+  top: -0.65rem;
+  left: 1rem;
+  background: var(--dark-bg);
+  padding: 0 0.5rem;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+
+/* ============================================================
+   CHECK LOCATION BUTTON
+   ============================================================ */
+.btn {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 1rem 2.5rem;
+  border: 2px solid var(--neon-green);
+  background: transparent;
+  color: var(--neon-green);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+  display: block;
+  margin: 0 auto;
+}
+
+.btn:hover {
+  background: var(--neon-green);
+  color: var(--dark-bg);
+  box-shadow:
+    0 0 15px var(--neon-green),
+    0 0 40px rgba(57, 255, 20, 0.3);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn:disabled:hover {
+  background: transparent;
+  color: var(--neon-green);
+  box-shadow: none;
+}
+
+/* ============================================================
+   SCANNING STATE — animated dots and bar
+   ============================================================ */
+.scan-state {
+  text-align: center;
+  display: none;
+}
+
+.scan-state.active {
+  display: block;
+}
+
+.scan-label {
+  font-size: 0.85rem;
+  color: var(--electric-blue);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  animation: blink 1s steps(1) infinite;
+}
+
+.scan-bar {
+  height: 3px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 0 2rem;
+}
+
+.scan-bar-fill {
+  height: 100%;
+  width: 30%;
+  background: var(--electric-blue);
+  box-shadow: 0 0 8px var(--electric-blue);
+  animation: scanSlide 1.5s ease-in-out infinite;
+}
+
+/* ============================================================
+   RESULT DISPLAY
+   ============================================================ */
+.result {
+  display: none;
+  text-align: center;
+}
+
+.result.active {
+  display: block;
+}
+
+/* Warning level label — the big dramatic word */
+.warning-level {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  position: relative;
+  /* Color set dynamically via JS */
+}
+
+/* Glitch effect layers using pseudo-elements */
+.warning-level::before,
+.warning-level::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.warning-level::before {
+  color: var(--electric-blue);
+  animation: glitchTop 3s infinite linear;
+  clip-path: inset(0 0 65% 0);
+}
+
+.warning-level::after {
+  color: var(--hot-pink);
+  animation: glitchBottom 2.5s infinite linear;
+  clip-path: inset(65% 0 0 0);
+}
+
+/* Warning message */
+.warning-message {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #cccccc;
+  margin: 1rem 0;
+  padding: 0.8rem;
+  border-left: 3px solid var(--text-dim);
+  text-align: left;
+}
+
+/* Distance readout */
+.distance-readout {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.distance-readout span {
+  color: var(--electric-blue);
+}
+
+/* ============================================================
+   ERROR STATE
+   ============================================================ */
+.error-state {
+  display: none;
+  text-align: center;
+}
+
+.error-state.active {
+  display: block;
+}
+
+.error-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  animation: blink 0.8s steps(1) infinite;
+}
+
+.error-text {
+  font-size: 0.9rem;
+  color: var(--hot-pink);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+/* ============================================================
+   DECORATIVE FOOTER READOUT
+   ============================================================ */
+.footer-readout {
+  margin-top: 2rem;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   WARNING-LEVEL COLOUR CLASSES
+   These set the colour of the big warning word and its glow.
+   ============================================================ */
+.level-critical {
+  color: #ff0040;
+  text-shadow: 0 0 10px #ff0040, 0 0 30px rgba(255, 0, 64, 0.5);
+  animation: criticalPulse 0.6s infinite alternate;
+}
+.level-severe  {
+  color: var(--hot-pink);
+  text-shadow: 0 0 10px var(--hot-pink), 0 0 30px rgba(255, 45, 149, 0.4);
+}
+.level-high {
+  color: #ff8c00;
+  text-shadow: 0 0 10px #ff8c00, 0 0 30px rgba(255, 140, 0, 0.4);
+}
+.level-elevated {
+  color: #ffdd00;
+  text-shadow: 0 0 10px #ffdd00, 0 0 30px rgba(255, 221, 0, 0.3);
+}
+.level-low {
+  color: var(--electric-blue);
+  text-shadow: 0 0 10px var(--electric-blue), 0 0 30px rgba(0, 240, 255, 0.3);
+}
+.level-clear {
+  color: var(--neon-green);
+  text-shadow: 0 0 10px var(--neon-green), 0 0 30px rgba(57, 255, 20, 0.3);
+}
+
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+
+/* Title flicker — subtle random opacity dips */
+@keyframes titleFlicker {
+  0%, 100% { opacity: 1; }
+  4%        { opacity: 0.85; }
+  6%        { opacity: 1; }
+  42%       { opacity: 0.9; }
+  44%       { opacity: 1; }
+  82%       { opacity: 0.92; }
+  84%       { opacity: 1; }
+}
+
+/* Blinking text for scan state */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Scanning bar animation */
+@keyframes scanSlide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+/* Glitch — top slice jitter */
+@keyframes glitchTop {
+  0%   { transform: translate(0); }
+  2%   { transform: translate(3px, -1px); }
+  4%   { transform: translate(-2px, 1px); }
+  6%   { transform: translate(0); }
+  50%  { transform: translate(0); }
+  52%  { transform: translate(-3px, 1px); }
+  54%  { transform: translate(2px, -1px); }
+  56%  { transform: translate(0); }
+  100% { transform: translate(0); }
+}
+
+/* Glitch — bottom slice jitter */
+@keyframes glitchBottom {
+  0%   { transform: translate(0); }
+  3%   { transform: translate(-2px, 1px); }
+  5%   { transform: translate(3px, -1px); }
+  7%   { transform: translate(0); }
+  60%  { transform: translate(0); }
+  62%  { transform: translate(2px, 1px); }
+  64%  { transform: translate(-3px, -1px); }
+  66%  { transform: translate(0); }
+  100% { transform: translate(0); }
+}
+
+/* CRITICAL level aggressive pulse */
+@keyframes criticalPulse {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0.8; transform: scale(1.02); }
+}
+
+/* Border colour accent per warning level */
+.panel.border-critical { border-color: #ff0040; box-shadow: 0 0 15px rgba(255, 0, 64, 0.25), inset 0 0 30px rgba(0,0,0,0.5); }
+.panel.border-severe   { border-color: var(--hot-pink); box-shadow: 0 0 15px rgba(255, 45, 149, 0.2), inset 0 0 30px rgba(0,0,0,0.5); }
+.panel.border-high     { border-color: #ff8c00; box-shadow: 0 0 15px rgba(255, 140, 0, 0.2), inset 0 0 30px rgba(0,0,0,0.5); }
+.panel.border-elevated { border-color: #ffdd00; box-shadow: 0 0 15px rgba(255, 221, 0, 0.15), inset 0 0 30px rgba(0,0,0,0.5); }
+.panel.border-low      { border-color: var(--electric-blue); box-shadow: 0 0 15px rgba(0, 240, 255, 0.15), inset 0 0 30px rgba(0,0,0,0.5); }
+.panel.border-clear    { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(57, 255, 20, 0.15), inset 0 0 30px rgba(0,0,0,0.5); }
+
+/* Message border accent */
+.warning-message.msg-critical { border-left-color: #ff0040; }
+.warning-message.msg-severe   { border-left-color: var(--hot-pink); }
+.warning-message.msg-high     { border-left-color: #ff8c00; }
+.warning-message.msg-elevated { border-left-color: #ffdd00; }
+.warning-message.msg-low      { border-left-color: var(--electric-blue); }
+.warning-message.msg-clear    { border-left-color: var(--neon-green); }
+
+/* ============================================================
+   RESPONSIVE TWEAKS
+   ============================================================ */
+@media (max-width: 500px) {
+  .panel {
+    padding: 1.5rem 1.2rem;
+  }
+  .btn {
+    font-size: 0.95rem;
+    padding: 0.8rem 1.5rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Title -->
+  <div class="title-block">
+    <h1>Cybergoth Proximity Warning</h1>
+    <div class="subtitle">// bridge-dweller surveillance system //</div>
+  </div>
+
+  <!-- Main panel -->
+  <div class="panel" id="panel">
+
+    <!-- Initial state: location button -->
+    <div id="initialState">
+      <button class="btn" id="checkBtn" onclick="startScan()">Check My Location</button>
+    </div>
+
+    <!-- Scanning state: loading indicator -->
+    <div class="scan-state" id="scanState">
+      <div class="scan-label" id="scanLabel">Acquiring coordinates<span class="dots">...</span></div>
+      <div class="scan-bar"><div class="scan-bar-fill"></div></div>
+    </div>
+
+    <!-- Result state: warning level + message -->
+    <div class="result" id="resultState">
+      <div class="warning-level" id="warningLevel" data-text=""></div>
+      <div class="warning-message" id="warningMessage"></div>
+      <div class="distance-readout" id="distanceReadout"></div>
+      <button class="btn" onclick="startScan()">Check Again</button>
+    </div>
+
+    <!-- Error state -->
+    <div class="error-state" id="errorState">
+      <div class="error-icon">&#x26A0;</div>
+      <div class="error-text" id="errorText"></div>
+      <button class="btn" onclick="startScan()">Retry Scan</button>
+    </div>
+
+  </div>
+
+  <!-- Decorative footer -->
+  <div class="footer-readout">
+    SYS.UPLINK // OVERPASS-OSM // NO_API_KEY_REQUIRED // CLASSIFIED
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   CYBERGOTH PROXIMITY WARNING — Core Logic
+   No external libraries. Pure vanilla JS.
+   ============================================================ */
+
+/**
+ * WARNING LEVEL DEFINITIONS
+ * Each entry maps a distance range to a warning level, colour class,
+ * and a humorous message about cybergoth proximity.
+ */
+const WARNING_LEVELS = [
+  {
+    maxDist: 50,
+    level: 'CRITICAL',
+    cls: 'critical',
+    msg: 'A cybergoth is directly beneath you. Check under your feet for neon dreadlocks.'
+  },
+  {
+    maxDist: 150,
+    level: 'SEVERE',
+    cls: 'severe',
+    msg: 'Extreme cybergoth proximity detected. Avoid eye contact.'
+  },
+  {
+    maxDist: 350,
+    level: 'HIGH',
+    cls: 'high',
+    msg: 'A cybergoth has been detected nearby. Do not approach.'
+  },
+  {
+    maxDist: 600,
+    level: 'ELEVATED',
+    cls: 'elevated',
+    msg: 'Cybergoth activity in the area. Stay alert.'
+  },
+  {
+    maxDist: 1000,
+    level: 'LOW',
+    cls: 'low',
+    msg: 'Faint cybergoth readings. You are probably fine.'
+  }
+];
+
+/** Fallback when no bridges are found or all are > 1000m */
+const CLEAR_LEVEL = {
+  level: 'CLEAR',
+  cls: 'clear',
+  msg: 'No cybergoths detected. You are safe... for now.'
+};
+
+
+/* ============================================================
+   UI STATE HELPERS
+   Show/hide the four mutually exclusive panel states.
+   ============================================================ */
+
+function showState(stateId) {
+  ['initialState', 'scanState', 'resultState', 'errorState'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (id === 'scanState') {
+      // scan state uses a different active class
+      el.classList.toggle('active', id === stateId);
+    } else if (id === 'resultState' || id === 'errorState') {
+      el.classList.toggle('active', id === stateId);
+    } else {
+      el.style.display = (id === stateId) ? 'block' : 'none';
+    }
+  });
+}
+
+function setScanLabel(text) {
+  document.getElementById('scanLabel').textContent = text + '...';
+}
+
+/** Reset panel border to default */
+function resetPanelBorder() {
+  var panel = document.getElementById('panel');
+  panel.className = 'panel';
+}
+
+
+/* ============================================================
+   MAIN SCAN FLOW
+   1. Get geolocation
+   2. Query Overpass API for bridges
+   3. Calculate distances
+   4. Display result
+   ============================================================ */
+
+function startScan() {
+  resetPanelBorder();
+  showState('scanState');
+  setScanLabel('Acquiring coordinates');
+
+  // Step 1: Get user's location via the Geolocation API
+  if (!navigator.geolocation) {
+    showError('Your browser does not support geolocation. The cybergoths remain undetected.');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    function(position) {
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+      setScanLabel('Scanning for bridge-dwellers');
+      queryOverpass(lat, lon);
+    },
+    function(err) {
+      // User denied permission or other geolocation error
+      showError('The cybergoths have blocked your GPS signal.');
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
+  );
+}
+
+
+/* ============================================================
+   OVERPASS API QUERY
+   Searches for bridges (nodes and ways tagged bridge=yes or
+   man_made=bridge) within a 1000m radius of the user.
+   ============================================================ */
+
+function queryOverpass(lat, lon) {
+  // Overpass QL query: find nodes and ways with bridge tags in a 1km radius.
+  // out center is used for ways so we get a centre coordinate.
+  var radius = 1000;
+  var query = '[out:json][timeout:15];'
+    + '('
+    + 'node["bridge"="yes"](around:' + radius + ',' + lat + ',' + lon + ');'
+    + 'way["bridge"="yes"](around:' + radius + ',' + lat + ',' + lon + ');'
+    + 'node["man_made"="bridge"](around:' + radius + ',' + lat + ',' + lon + ');'
+    + 'way["man_made"="bridge"](around:' + radius + ',' + lat + ',' + lon + ');'
+    + ');'
+    + 'out center;';
+
+  var url = 'https://overpass-api.de/api/interpreter';
+  var body = 'data=' + encodeURIComponent(query);
+
+  // Use XMLHttpRequest for maximum compatibility, no dependencies
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', url, true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.timeout = 20000;
+
+  xhr.onload = function() {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        var data = JSON.parse(xhr.responseText);
+        processResults(lat, lon, data.elements || []);
+      } catch (e) {
+        showError('Cybergoth interference is disrupting the scan.');
+      }
+    } else {
+      showError('Cybergoth interference is disrupting the scan.');
+    }
+  };
+
+  xhr.onerror = function() {
+    showError('Cybergoth interference is disrupting the scan.');
+  };
+
+  xhr.ontimeout = function() {
+    showError('Cybergoth interference is disrupting the scan.');
+  };
+
+  xhr.send(body);
+}
+
+
+/* ============================================================
+   PROCESS RESULTS
+   Extract coordinates from each element, compute distance,
+   find the nearest one, and display the appropriate warning.
+   ============================================================ */
+
+function processResults(userLat, userLon, elements) {
+  var nearest = Infinity;
+
+  for (var i = 0; i < elements.length; i++) {
+    var el = elements[i];
+    var elLat, elLon;
+
+    if (el.type === 'node') {
+      // Nodes have lat/lon directly
+      elLat = el.lat;
+      elLon = el.lon;
+    } else if (el.type === 'way' && el.center) {
+      // Ways return a centre point when queried with "out center"
+      elLat = el.center.lat;
+      elLon = el.center.lon;
+    } else {
+      // Skip elements without usable coordinates
+      continue;
+    }
+
+    var dist = haversine(userLat, userLon, elLat, elLon);
+    if (dist < nearest) {
+      nearest = dist;
+    }
+  }
+
+  displayResult(nearest);
+}
+
+
+/* ============================================================
+   HAVERSINE FORMULA
+   Returns the distance in metres between two lat/lon points.
+   ============================================================ */
+
+function haversine(lat1, lon1, lat2, lon2) {
+  var R = 6371000; // Earth radius in metres
+  var toRad = Math.PI / 180;
+
+  var dLat = (lat2 - lat1) * toRad;
+  var dLon = (lon2 - lon1) * toRad;
+
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+        + Math.cos(lat1 * toRad) * Math.cos(lat2 * toRad)
+        * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+
+/* ============================================================
+   DISPLAY RESULT
+   Picks the correct warning level and updates the DOM.
+   ============================================================ */
+
+function displayResult(distanceMetres) {
+  var info = CLEAR_LEVEL;
+
+  // Find the first threshold the distance falls under
+  if (distanceMetres !== Infinity) {
+    for (var i = 0; i < WARNING_LEVELS.length; i++) {
+      if (distanceMetres <= WARNING_LEVELS[i].maxDist) {
+        info = WARNING_LEVELS[i];
+        break;
+      }
+    }
+    // If distance > 1000m, info stays as CLEAR_LEVEL
+  }
+
+  // Update the warning level text
+  var levelEl = document.getElementById('warningLevel');
+  levelEl.textContent = info.level;
+  levelEl.setAttribute('data-text', info.level);
+
+  // Remove old level classes, apply new one
+  levelEl.className = 'warning-level level-' + info.cls;
+
+  // Update message
+  var msgEl = document.getElementById('warningMessage');
+  msgEl.textContent = info.msg;
+  msgEl.className = 'warning-message msg-' + info.cls;
+
+  // Update distance readout
+  var readoutEl = document.getElementById('distanceReadout');
+  if (distanceMetres !== Infinity && distanceMetres <= 1000) {
+    readoutEl.innerHTML = 'Nearest cybergoth: <span>' + Math.round(distanceMetres) + 'm</span>';
+  } else {
+    readoutEl.innerHTML = 'Nearest cybergoth: <span>None within 1km</span>';
+  }
+
+  // Update panel border colour
+  var panel = document.getElementById('panel');
+  panel.className = 'panel border-' + info.cls;
+
+  // Show the result state
+  showState('resultState');
+}
+
+
+/* ============================================================
+   ERROR DISPLAY
+   ============================================================ */
+
+function showError(message) {
+  document.getElementById('errorText').textContent = message;
+  resetPanelBorder();
+  document.getElementById('panel').classList.add('border-critical');
+  showState('errorState');
+}
+</script>
+
+</body>
+</html>
