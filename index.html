@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CYBERGOTH PROXIMITY WARNING</title>
 
-<!-- Google Fonts: Share Tech Mono for monospace, Orbitron for display headings -->
+<!-- Google Fonts: Special Elite for body (typewriter), Bebas Neue for display headings (brutal poster) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================
@@ -21,29 +21,29 @@
 }
 
 :root {
-  --neon-green: #39ff14;
-  --electric-blue: #00f0ff;
-  --hot-pink: #ff2d95;
-  --dark-bg: #0a0a0a;
-  --panel-bg: #111111;
-  --border-color: #1a1a1a;
-  --text-dim: #555555;
-  --font-mono: 'Share Tech Mono', monospace;
-  --font-display: 'Orbitron', sans-serif;
+  --red: #C41200;
+  --red-dark: #6B0800;
+  --white: #E8E0D0;
+  --white-dim: #786A62;
+  --dark-bg: #080707;
+  --panel-bg: #0D0B0B;
+  --rule-color: #201818;
+  --text-dim: #3A2E2C;
+  --font-mono: 'Special Elite', 'Courier New', monospace;
+  --font-display: 'Bebas Neue', 'Impact', sans-serif;
 }
 
 html, body {
   height: 100%;
   background: var(--dark-bg);
-  color: var(--neon-green);
+  color: var(--white);
   font-family: var(--font-mono);
   overflow-x: hidden;
 }
 
 /* ============================================================
-   CRT SCANLINE OVERLAY
-   Covers the entire viewport with a repeating horizontal line
-   pattern to simulate an old CRT monitor.
+   GRAIN OVERLAY
+   SVG fractal noise — simulates print/paper grain texture.
    ============================================================ */
 body::after {
   content: '';
@@ -51,16 +51,13 @@ body::after {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.15) 0px,
-    rgba(0, 0, 0, 0.15) 1px,
-    transparent 1px,
-    transparent 3px
-  );
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
 }
 
-/* Subtle vignette effect around edges */
+/* Deep corner vignette */
 body::before {
   content: '';
   position: fixed;
@@ -69,8 +66,8 @@ body::before {
   pointer-events: none;
   background: radial-gradient(
     ellipse at center,
-    transparent 50%,
-    rgba(0, 0, 0, 0.6) 100%
+    transparent 45%,
+    rgba(0, 0, 0, 0.75) 100%
   );
 }
 
@@ -92,57 +89,63 @@ body::before {
    ============================================================ */
 .title-block {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
+  width: 100%;
+  max-width: 560px;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--rule-color);
 }
 
 .title-block h1 {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(1.4rem, 5vw, 2.8rem);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 9vw, 5rem);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--neon-green);
-  text-shadow:
-    0 0 7px var(--neon-green),
-    0 0 20px var(--neon-green),
-    0 0 40px rgba(57, 255, 20, 0.4);
+  letter-spacing: 0.06em;
+  color: var(--white);
+  line-height: 1;
+  text-shadow: none;
   animation: titleFlicker 4s infinite;
 }
 
 .title-block .subtitle {
-  font-size: 0.75rem;
-  color: var(--text-dim);
-  letter-spacing: 0.3em;
+  font-size: 0.6rem;
+  color: var(--white-dim);
+  letter-spacing: 0.35em;
   text-transform: uppercase;
-  margin-top: 0.5rem;
+  margin-top: 0.6rem;
 }
 
 /* ============================================================
-   MAIN PANEL — the "surveillance software" frame
+   MAIN PANEL
+   Top accent rule, thin side/bottom borders — poster section feel.
    ============================================================ */
 .panel {
   background: var(--panel-bg);
-  border: 1px solid var(--neon-green);
-  box-shadow:
-    0 0 10px rgba(57, 255, 20, 0.15),
-    inset 0 0 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--rule-color);
+  border-top: 4px solid var(--white);
+  box-shadow: none;
   padding: 2rem 2.5rem;
-  max-width: 520px;
+  max-width: 560px;
   width: 100%;
   position: relative;
+  margin-top: 0;
 }
 
-/* Corner decoration — top left */
+/* Metadata label centred on the top rule */
 .panel::before {
-  content: '▸ SYS.BRIDGE_SCAN v0.6.66';
+  content: 'PROXIMITY SCAN // NO.1 // CLASSIFIED';
   position: absolute;
-  top: -0.65rem;
-  left: 1rem;
+  top: -0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--dark-bg);
-  padding: 0 0.5rem;
-  font-size: 0.65rem;
+  white-space: nowrap;
+  padding: 0 0.75rem;
+  font-size: 0.55rem;
   color: var(--text-dim);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.2em;
+  font-family: var(--font-mono);
 }
 
 /* ============================================================
@@ -150,46 +153,43 @@ body::before {
    ============================================================ */
 .btn {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 400;
+  font-size: 1.5rem;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding: 1rem 2.5rem;
-  border: 2px solid var(--neon-green);
+  letter-spacing: 0.1em;
+  padding: 0.8rem 2.5rem;
+  border: 2px solid var(--white);
   background: transparent;
-  color: var(--neon-green);
+  color: var(--white);
   cursor: pointer;
   position: relative;
-  transition: all 0.2s;
+  transition: background 0.15s, color 0.15s;
   display: block;
   margin: 0 auto;
+  width: 100%;
 }
 
 .btn:hover {
-  background: var(--neon-green);
+  background: var(--white);
   color: var(--dark-bg);
-  box-shadow:
-    0 0 15px var(--neon-green),
-    0 0 40px rgba(57, 255, 20, 0.3);
 }
 
 .btn:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .btn:disabled {
-  opacity: 0.4;
+  opacity: 0.25;
   cursor: not-allowed;
 }
 
 .btn:disabled:hover {
   background: transparent;
-  color: var(--neon-green);
-  box-shadow: none;
+  color: var(--white);
 }
 
 /* ============================================================
-   SCANNING STATE — animated dots and bar
+   SCANNING STATE
    ============================================================ */
 .scan-state {
   text-align: center;
@@ -201,27 +201,27 @@ body::before {
 }
 
 .scan-label {
-  font-size: 0.85rem;
-  color: var(--electric-blue);
-  letter-spacing: 0.2em;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--white);
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   animation: blink 1s steps(1) infinite;
 }
 
 .scan-bar {
-  height: 3px;
-  background: var(--border-color);
-  border-radius: 2px;
+  height: 2px;
+  background: var(--rule-color);
+  border-radius: 0;
   overflow: hidden;
-  margin: 0 2rem;
+  margin: 0;
 }
 
 .scan-bar-fill {
   height: 100%;
   width: 30%;
-  background: var(--electric-blue);
-  box-shadow: 0 0 8px var(--electric-blue);
+  background: var(--red);
   animation: scanSlide 1.5s ease-in-out infinite;
 }
 
@@ -237,19 +237,19 @@ body::before {
   display: block;
 }
 
-/* Warning level label — the big dramatic word */
+/* Warning level label — absolutely massive, poster-scale */
 .warning-level {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-weight: 400;
+  font-size: clamp(4rem, 20vw, 7.5rem);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.1em;
+  line-height: 0.9;
   position: relative;
-  /* Color set dynamically via JS */
 }
 
-/* Glitch effect layers using pseudo-elements */
+/* Subtle glitch ghost layers */
 .warning-level::before,
 .warning-level::after {
   content: attr(data-text);
@@ -259,40 +259,41 @@ body::before {
 }
 
 .warning-level::before {
-  color: var(--electric-blue);
+  color: rgba(196, 18, 0, 0.45);
   animation: glitchTop 3s infinite linear;
   clip-path: inset(0 0 65% 0);
 }
 
 .warning-level::after {
-  color: var(--hot-pink);
+  color: rgba(200, 80, 20, 0.35);
   animation: glitchBottom 2.5s infinite linear;
   clip-path: inset(65% 0 0 0);
 }
 
-/* Warning message */
+/* Warning message — horizontal rule borders, no left bar */
 .warning-message {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #cccccc;
-  margin: 1rem 0;
-  padding: 0.8rem;
-  border-left: 3px solid var(--text-dim);
+  font-size: 0.8rem;
+  line-height: 1.75;
+  color: var(--white-dim);
+  margin: 0.75rem 0;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--rule-color);
+  border-bottom: 1px solid var(--rule-color);
   text-align: left;
 }
 
 /* Distance readout */
 .distance-readout {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--text-dim);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
   margin-bottom: 1.5rem;
 }
 
 .distance-readout span {
-  color: var(--electric-blue);
+  color: var(--white);
 }
 
 /* ============================================================
@@ -314,9 +315,9 @@ body::before {
 }
 
 .error-text {
-  font-size: 0.9rem;
-  color: var(--hot-pink);
-  line-height: 1.5;
+  font-size: 0.8rem;
+  color: var(--red);
+  line-height: 1.6;
   margin-bottom: 1.5rem;
 }
 
@@ -324,49 +325,45 @@ body::before {
    DECORATIVE FOOTER READOUT
    ============================================================ */
 .footer-readout {
-  margin-top: 2rem;
-  font-size: 0.6rem;
+  margin-top: 0;
+  font-size: 0.55rem;
   color: var(--text-dim);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.2em;
   text-align: center;
   text-transform: uppercase;
+  width: 100%;
+  max-width: 560px;
+  border-top: 1px solid var(--rule-color);
+  padding-top: 0.75rem;
 }
 
 /* ============================================================
    WARNING-LEVEL COLOUR CLASSES
-   These set the colour of the big warning word and its glow.
    ============================================================ */
 .level-critical {
-  color: #ff0040;
-  text-shadow: 0 0 10px #ff0040, 0 0 30px rgba(255, 0, 64, 0.5);
-  animation: criticalPulse 0.6s infinite alternate;
+  color: var(--red);
+  animation: criticalPulse 0.5s infinite alternate;
 }
-.level-severe  {
-  color: var(--hot-pink);
-  text-shadow: 0 0 10px var(--hot-pink), 0 0 30px rgba(255, 45, 149, 0.4);
+.level-severe {
+  color: #D42020;
 }
 .level-high {
-  color: #ff8c00;
-  text-shadow: 0 0 10px #ff8c00, 0 0 30px rgba(255, 140, 0, 0.4);
+  color: #C46010;
 }
 .level-elevated {
-  color: #ffdd00;
-  text-shadow: 0 0 10px #ffdd00, 0 0 30px rgba(255, 221, 0, 0.3);
+  color: #A88820;
 }
 .level-low {
-  color: var(--electric-blue);
-  text-shadow: 0 0 10px var(--electric-blue), 0 0 30px rgba(0, 240, 255, 0.3);
+  color: var(--white-dim);
 }
 .level-clear {
-  color: var(--neon-green);
-  text-shadow: 0 0 10px var(--neon-green), 0 0 30px rgba(57, 255, 20, 0.3);
+  color: #507A50;
 }
 
 /* ============================================================
    KEYFRAME ANIMATIONS
    ============================================================ */
 
-/* Title flicker — subtle random opacity dips */
 @keyframes titleFlicker {
   0%, 100% { opacity: 1; }
   4%        { opacity: 0.85; }
@@ -377,19 +374,16 @@ body::before {
   84%       { opacity: 1; }
 }
 
-/* Blinking text for scan state */
 @keyframes blink {
   0%, 49% { opacity: 1; }
   50%, 100% { opacity: 0; }
 }
 
-/* Scanning bar animation */
 @keyframes scanSlide {
   0%   { transform: translateX(-100%); }
   100% { transform: translateX(400%); }
 }
 
-/* Glitch — top slice jitter */
 @keyframes glitchTop {
   0%   { transform: translate(0); }
   2%   { transform: translate(3px, -1px); }
@@ -402,7 +396,6 @@ body::before {
   100% { transform: translate(0); }
 }
 
-/* Glitch — bottom slice jitter */
 @keyframes glitchBottom {
   0%   { transform: translate(0); }
   3%   { transform: translate(-2px, 1px); }
@@ -415,27 +408,26 @@ body::before {
   100% { transform: translate(0); }
 }
 
-/* CRITICAL level aggressive pulse */
 @keyframes criticalPulse {
-  from { opacity: 1; transform: scale(1); }
-  to   { opacity: 0.8; transform: scale(1.02); }
+  from { opacity: 1; }
+  to   { opacity: 0.6; }
 }
 
-/* Border colour accent per warning level */
-.panel.border-critical { border-color: #ff0040; box-shadow: 0 0 15px rgba(255, 0, 64, 0.25), inset 0 0 30px rgba(0,0,0,0.5); }
-.panel.border-severe   { border-color: var(--hot-pink); box-shadow: 0 0 15px rgba(255, 45, 149, 0.2), inset 0 0 30px rgba(0,0,0,0.5); }
-.panel.border-high     { border-color: #ff8c00; box-shadow: 0 0 15px rgba(255, 140, 0, 0.2), inset 0 0 30px rgba(0,0,0,0.5); }
-.panel.border-elevated { border-color: #ffdd00; box-shadow: 0 0 15px rgba(255, 221, 0, 0.15), inset 0 0 30px rgba(0,0,0,0.5); }
-.panel.border-low      { border-color: var(--electric-blue); box-shadow: 0 0 15px rgba(0, 240, 255, 0.15), inset 0 0 30px rgba(0,0,0,0.5); }
-.panel.border-clear    { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(57, 255, 20, 0.15), inset 0 0 30px rgba(0,0,0,0.5); }
+/* Top rule colour per warning level */
+.panel.border-critical { border-top-color: var(--red); }
+.panel.border-severe   { border-top-color: #D42020; }
+.panel.border-high     { border-top-color: #C46010; }
+.panel.border-elevated { border-top-color: #A88820; }
+.panel.border-low      { border-top-color: var(--white-dim); }
+.panel.border-clear    { border-top-color: #507A50; }
 
-/* Message border accent */
-.warning-message.msg-critical { border-left-color: #ff0040; }
-.warning-message.msg-severe   { border-left-color: var(--hot-pink); }
-.warning-message.msg-high     { border-left-color: #ff8c00; }
-.warning-message.msg-elevated { border-left-color: #ffdd00; }
-.warning-message.msg-low      { border-left-color: var(--electric-blue); }
-.warning-message.msg-clear    { border-left-color: var(--neon-green); }
+/* Message rule accent */
+.warning-message.msg-critical { border-color: var(--red); }
+.warning-message.msg-severe   { border-color: #D42020; }
+.warning-message.msg-high     { border-color: #C46010; }
+.warning-message.msg-elevated { border-color: #A88820; }
+.warning-message.msg-low      { border-color: var(--white-dim); }
+.warning-message.msg-clear    { border-color: #507A50; }
 
 /* ============================================================
    RESPONSIVE TWEAKS
@@ -445,8 +437,8 @@ body::before {
     padding: 1.5rem 1.2rem;
   }
   .btn {
-    font-size: 0.95rem;
-    padding: 0.8rem 1.5rem;
+    font-size: 1.2rem;
+    padding: 0.7rem 1rem;
   }
 }
 </style>
