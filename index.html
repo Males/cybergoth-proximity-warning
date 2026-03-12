@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybergoth Exposure Warning System</title>
+<title>GOTHRAD — Cybergoth Proximity Monitor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   RESET & BASE — Black/white industrial palette
+   GOTHRAD — CRT Terminal
    ============================================================ */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -18,276 +18,124 @@
 }
 
 :root {
-  --black: #000000;
-  --white: #FFFFFF;
-  --grey: #D9D9D9;
-  --grey-stripe: #E0E0E0;
-  --font-display: 'Bebas Neue', 'Oswald', sans-serif;
-  --font-heading: 'Oswald', sans-serif;
-  --font-body: 'Work Sans', sans-serif;
+  --bg: #161616;
+  --fg: #ffffff;
+  --font-term: 'VT323', monospace;
+  --text-glow: 0 0 5px rgba(255,255,255,0.75);
 }
 
 html, body {
   min-height: 100%;
-  background: var(--black);
-  color: var(--white);
-  font-family: var(--font-body);
-  overflow-x: hidden;
-}
-
-/* ============================================================
-   PAGE LAYOUT
-   ============================================================ */
-.container {
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 0 1.25rem 2rem;
-}
-
-/* ============================================================
-   HEADER — Diagonal stripes + badges (PF brackets + diamond/skull)
-   ============================================================ */
-.page-header {
-  position: relative;
-  min-height: 140px;
-  margin-bottom: 1.5rem;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-term);
   overflow: hidden;
 }
 
-/* Diagonal stripes — bottom-left to top-right */
-.header-stripes {
+/* CRT frame */
+.crt-frame {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  padding: 1.5rem;
+  background: var(--bg);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Scanlines overlay */
+.crt-frame::after {
+  content: '';
   position: absolute;
   inset: 0;
+  z-index: 0;
+  pointer-events: none;
   background: repeating-linear-gradient(
-    125deg,
-    var(--black) 0,
-    var(--black) 12px,
-    var(--grey-stripe) 12px,
-    var(--grey-stripe) 24px
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
   );
-  opacity: 0.95;
 }
 
-/* Top-right cluster: bracket frame + PF + diamond with skull */
-.header-badges {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
-}
-
-/* L-shaped bracket frame (reticle) — four corners */
-.bracket-frame {
-  width: 24px;
-  height: 24px;
+/* Terminal content area */
+.terminal {
   position: relative;
-}
-
-.bracket-frame .corner {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--white);
-}
-
-.bracket-frame .corner-tl {
-  top: 0;
-  left: 0;
-  border-right: none;
-  border-bottom: none;
-}
-
-.bracket-frame .corner-tr {
-  top: 0;
-  right: 0;
-  border-left: none;
-  border-bottom: none;
-}
-
-.bracket-frame .corner-bl {
-  bottom: 0;
-  left: 0;
-  border-right: none;
-  border-top: none;
-}
-
-.bracket-frame .corner-br {
-  bottom: 0;
-  right: 0;
-  border-left: none;
-  border-top: none;
-}
-
-/* PF letters in brackets — simplified as stacked chars */
-.pf-brackets {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  color: var(--white);
-}
-
-.pf-brackets span {
-  display: block;
-  border: 1px solid var(--white);
-  padding: 0.1em 0.35em;
-  text-align: center;
-  margin-bottom: 2px;
-}
-
-/* Diamond with skull */
-.diamond-skull {
-  width: 48px;
-  height: 48px;
-  border: 2px solid var(--white);
-  background: rgba(217, 217, 217, 0.12);
-  transform: rotate(45deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.diamond-skull img {
-  width: 36px;
-  height: 28px;
-  object-fit: contain;
-  transform: rotate(-45deg);
-  color: var(--grey);
-}
-
-/* ============================================================
-   MAIN CONTENT — Pre-title, title, intro, CTA
-   ============================================================ */
-.pre-title {
-  font-family: var(--font-body);
-  font-size: 0.65rem;
-  font-weight: 500;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--white);
-  margin-bottom: 0.75rem;
-}
-
-.main-title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(2rem, 8vw, 3.5rem);
-  line-height: 1.05;
+  z-index: 1;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-size: 20px;
+  line-height: 1.4;
   letter-spacing: 0.02em;
+  white-space: pre-wrap;
+  word-break: break-word;
   text-transform: uppercase;
-  color: var(--white);
-  margin-bottom: 1.25rem;
+  text-shadow: var(--text-glow);
 }
 
-/* Diagonal stripes extending from end of title (desktop) */
-.main-title-wrap {
-  position: relative;
+/* Desktop: centred 980px container */
+@media (min-width: 768px) {
+  .terminal {
+    max-width: 980px;
+    margin: 0 auto;
+    font-size: 40px;
+  }
+}
+
+.terminal .line {
+  min-height: 1.4em;
+}
+
+/* Cursor blink */
+.cursor {
   display: inline-block;
+  width: 0.6em;
+  height: 1.1em;
+  background: var(--fg);
+  vertical-align: text-bottom;
+  animation: cursor-blink 1s steps(1) infinite;
 }
 
-.intro {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  line-height: 1.7;
-  color: var(--white);
-  margin-bottom: 1.5rem;
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
 
-.intro p {
-  margin-bottom: 0.85rem;
-}
-
-.intro p:last-child {
-  margin-bottom: 0;
-}
-
-/* ============================================================
-   BUTTON — SCAN MY AREA
-   ============================================================ */
-.btn {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--white);
-  background: var(--black);
-  border: 2px solid var(--white);
-  padding: 0.85rem 2rem;
-  cursor: pointer;
+/* ASCII banner — mobile: compressed, desktop: fixed readable size */
+.ascii-banner {
   display: block;
+  font-size: clamp(6px, 5.5vw, 14px);
+  line-height: 1.2;
+  overflow-x: hidden;
   width: 100%;
-  max-width: 320px;
-  margin: 0 auto 0 0;
-  transition: background 0.2s, color 0.2s;
-}
-
-.btn:hover {
-  background: var(--white);
-  color: var(--black);
-}
-
-.btn:active {
-  transform: scale(0.98);
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ============================================================
-   SECTION DIVIDER — Thick white line
-   ============================================================ */
-.section-divider {
-  height: 2px;
-  background: var(--white);
-  border: none;
-  margin: 2rem 0 1.5rem;
-}
-
-/* ============================================================
-   HOW IT WORKS
-   ============================================================ */
-.how-it-works h2 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 1.35rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--white);
-  margin-bottom: 1rem;
-}
-
-.how-it-works ol {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  line-height: 1.75;
-  color: var(--white);
-  padding-left: 1.35rem;
-}
-
-.how-it-works li {
+  font-family: var(--font-term), monospace;
+  text-shadow: var(--text-glow);
   margin-bottom: 0.5rem;
 }
 
-/* ============================================================
-   FOOTER DISCLAIMER
-   ============================================================ */
-.footer-disclaimer {
-  font-family: var(--font-body);
-  font-size: 0.7rem;
-  font-style: italic;
-  color: var(--white);
-  margin-top: 1.5rem;
+.ascii-banner .line {
+  display: block;
+  text-align: center;
+  white-space: pre;
+  font-size: inherit;
+  color: var(--fg);
+  text-shadow: var(--text-glow);
+  min-height: 1.2em;
 }
 
-/* ============================================================
-   STATES — Initial / Scan / Result / Error (show-hide)
-   ============================================================ */
+@media (min-width: 768px) {
+  .ascii-banner {
+    font-size: 18px;
+    margin-bottom: 0;
+  }
+}
+
+/* State panels */
 .state-panel {
   display: none;
 }
@@ -296,238 +144,634 @@ html, body {
   display: block;
 }
 
-/* Scanning state */
-.scan-label {
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  letter-spacing: 0.15em;
+/* Initial state — centred on both mobile and desktop */
+#initialState.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.5rem;
+}
+
+/* Description text */
+.terminal-desc {
+  font-family: var(--font-term), monospace;
+  font-size: inherit;
+  color: var(--fg);
+  text-align: center;
+  margin: 0.4rem 0;
+  line-height: 1.25;
+  text-shadow: var(--text-glow);
+}
+
+/* Button — terminal style, no border */
+.cmd-btn {
+  font-family: var(--font-term), monospace;
+  font-size: inherit;
+  color: var(--fg);
+  background: transparent;
+  border: none;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  margin-top: 1rem;
+  display: block;
+  text-align: center;
+  width: 100%;
+  text-shadow: var(--text-glow);
   text-transform: uppercase;
-  color: var(--white);
-  margin-bottom: 1rem;
-  animation: blink 1s steps(1) infinite;
+  transition: opacity 0.15s;
 }
 
-.scan-bar {
-  height: 2px;
-  background: var(--grey);
-  overflow: hidden;
-  margin-bottom: 1rem;
+.cmd-btn:hover {
+  opacity: 0.75;
 }
 
-.scan-bar-fill {
-  height: 100%;
-  width: 30%;
-  background: var(--white);
-  animation: scanSlide 1.5s ease-in-out infinite;
+.cmd-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-/* Result state */
-.result .warning-level {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(2rem, 10vw, 4rem);
-  line-height: 1;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--white);
-  margin-bottom: 0.5rem;
+/* Re-scan button — always centred */
+#rescanBtn {
+  margin-top: 1.5rem;
+  text-align: center;
 }
 
-.result .warning-message {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--white);
-  margin-bottom: 1rem;
+/* Footer */
+.footer-line {
+  font-size: inherit;
+  opacity: 0.9;
+  margin-top: 1.5rem;
+  text-align: center;
+  text-shadow: var(--text-glow);
 }
 
-.result .distance-readout {
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  color: var(--grey);
-  margin-bottom: 1.25rem;
+/* Lock-acquired pulse */
+@keyframes lock-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
-.result .distance-readout span {
-  color: var(--white);
+.lock-acquired-pulse {
+  animation: lock-pulse 1.2s ease-in-out infinite;
 }
 
-/* Warning level colours (result only — keep monochrome with intensity) */
-.level-critical { color: #ff4444; }
-.level-severe   { color: #ff6666; }
-.level-high     { color: #ff9944; }
-.level-elevated { color: #ddbb44; }
-.level-low      { color: var(--grey); }
-.level-clear    { color: #66aa66; }
-
-/* Error state */
-.error-state .error-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  animation: blink 0.8s steps(1) infinite;
-}
-
-.error-state .error-text {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--white);
-  margin-bottom: 1.25rem;
-}
-
-@keyframes blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
-@keyframes scanSlide {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(400%); }
+/* Error icon blink */
+.error-icon {
+  animation: cursor-blink 0.8s steps(1) infinite;
 }
 
 /* ============================================================
-   RESPONSIVE
+   BOOT OVERLAY
    ============================================================ */
-@media (max-width: 500px) {
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
+#bootOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-term), monospace;
+  overflow: hidden;
+  box-sizing: border-box;
+  text-shadow: var(--text-glow);
+  text-transform: uppercase;
+  /* Mobile: minimal padding, top-left */
+  padding: 8px 8px 0 8px;
+  /* Slide-down reveal animation */
+  transform: translateY(0);
+  transition: transform 0.8s ease-in;
+}
+
+@media (min-width: 768px) {
+  #bootOverlay {
+    padding: 80px 0 0 240px;
   }
-  .main-title {
-    font-size: clamp(1.65rem, 7vw, 2.5rem);
+}
+
+#bootOverlay.hiding {
+  transform: translateY(100%);
+  pointer-events: none;
+}
+
+#bootOverlay.hidden {
+  display: none;
+}
+
+/* Boot terminal text */
+.boot-terminal {
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-sizing: border-box;
+  max-width: 600px;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+@media (min-width: 768px) {
+  .boot-terminal {
+    font-size: 36px;
   }
-  .btn {
-    font-size: 0.9rem;
-    padding: 0.75rem 1.25rem;
+}
+
+.boot-terminal .cursor {
+  display: inline-block;
+  width: 0.35em;
+  height: 1em;
+  min-width: 4px;
+  background: var(--fg);
+  vertical-align: text-bottom;
+  animation: cursor-blink 1s steps(1) infinite;
+}
+
+/* Fill phase — full-bleed GOTHNEET stream */
+#bootOverlay.fill-phase {
+  padding: 0;
+}
+
+#bootOverlay.fill-phase .boot-terminal {
+  max-width: none;
+  width: 100%;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1;
+}
+
+@media (min-width: 768px) {
+  #bootOverlay.fill-phase .boot-terminal {
+    font-size: 18px;
   }
+}
+
+.boot-terminal .fill-stream {
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* Site content — hidden until boot finishes */
+.site-content {
+  opacity: 0;
+  transition: opacity 0.6s ease-in;
+}
+
+.site-content.visible {
+  opacity: 1;
 }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div id="bootOverlay" aria-live="polite">
+  <div class="boot-terminal" id="bootTerminal"></div>
+</div>
 
-  <!-- Header: stripes + PF + diamond/skull -->
-  <header class="page-header">
-    <div class="header-stripes" aria-hidden="true"></div>
-    <div class="header-badges">
-      <div class="bracket-frame" aria-hidden="true">
-        <span class="corner corner-tl"></span>
-        <span class="corner corner-tr"></span>
-        <span class="corner corner-bl"></span>
-        <span class="corner corner-br"></span>
+<div class="crt-frame site-content" id="siteContent">
+  <main class="terminal" id="terminal" role="log" aria-live="polite">
+
+    <!-- ASCII banner — always visible after boot -->
+    <div class="ascii-banner" id="asciiBanner">
+      <div class="ascii-logo">
+        <div class="line">  /$$$$$$   /$$$$$$  /$$$$$$$$ /$$   /$$ /$$$$$$$   /$$$$$$  /$$$$$$$ </div>
+        <div class="line"> /$$__  $$ /$$__  $$|__  $$__/| $$  | $$| $$__  $$ /$$__  $$| $$__  $$</div>
+        <div class="line">| $$  \__/| $$  \ $$   | $$   | $$  | $$| $$  \ $$| $$  \ $$| $$  \ $$</div>
+        <div class="line">| $$ /$$$$| $$  | $$   | $$   | $$$$$$$$| $$$$$$$/| $$$$$$$$| $$  | $$</div>
+        <div class="line">| $$|_  $$| $$  | $$   | $$   | $$__  $$| $$__  $$| $$__  $$| $$  | $$</div>
+        <div class="line">| $$  \ $$| $$  | $$   | $$   | $$  | $$| $$  \ $$| $$  | $$| $$  | $$</div>
+        <div class="line">|  $$$$$$/|  $$$$$$/   | $$   | $$  | $$| $$  | $$| $$  | $$| $$$$$$$/</div>
+        <div class="line"> \______/  \______/    |__/   |__/  |__/|__/  |__/|__/  |__/|_______/ </div>
+        <div class="line"></div>
       </div>
-      <div class="pf-brackets">
-        <span>P</span><span>F</span>
-      </div>
-      <div class="diamond-skull" aria-hidden="true">
-        <img src="skull.svg" alt="" width="36" height="28">
+      <div class="banner-title">
+        <div class="line">===============================================</div>
+        <div class="line">     /// GOTHRAD V3.1 ///</div>
+        <div class="line"></div>
+        <div class="line">CYBERGOTH PROXIMITY MONITORING TERMINAL</div>
+        <div class="line">INDUSTRIAL SUBCULTURE DETECTION ARRAY</div>
+        <div class="line">===============================================</div>
+        <div class="line"></div>
       </div>
     </div>
-  </header>
 
-  <!-- Initial state: landing -->
-  <div id="initialState" class="state-panel active">
-    <p class="pre-title">//THE DEPARTMENT OF RIVETHEAD PRESERVATION//</p>
-    <h1 class="main-title">CYBERGOTH EXPOSURE WARNING SYSTEM</h1>
-    <div class="intro">
-      <p>A public service for rivetheads, part time goths, and double denim wearers at gothneet.</p>
-      <p>Because sometimes you just want a quiet night of industrial techno, not a surprise outbreak of neon dreadlocks and spacehoppers.</p>
+    <!-- Initial state -->
+    <div id="initialState" class="state-panel active">
+      <p class="terminal-desc">THIS TERMINAL PROVIDES REAL-TIME THREAT ANALYSIS OF LOCAL CYBERGOTH EXPOSURE.</p>
+      <p class="terminal-desc">ENABLE LOCATION ACCESS TO INITIALISE ARRAY GRID.</p>
+      <button type="button" class="cmd-btn" id="checkBtn" onclick="startScan()">[[[ EXECUTE SCAN ]]]</button>
     </div>
-    <button type="button" class="btn" id="checkBtn" onclick="startScan()">SCAN MY AREA</button>
-  </div>
 
-  <!-- Scanning state -->
-  <div id="scanState" class="state-panel">
-    <div class="scan-label" id="scanLabel">Acquiring coordinates...</div>
-    <div class="scan-bar"><div class="scan-bar-fill"></div></div>
-  </div>
+    <!-- Scan state — persists into result (result lines appended here) -->
+    <div id="scanState" class="state-panel">
+      <div id="scanLines"></div>
+      <button type="button" class="cmd-btn" id="rescanBtn" style="display:none" onclick="startScan()">[[[ RE-SCAN ]]]</button>
+    </div>
 
-  <!-- Result state -->
-  <div id="resultState" class="state-panel">
-    <div class="warning-level" id="warningLevel" data-text=""></div>
-    <div class="warning-message" id="warningMessage"></div>
-    <div class="distance-readout" id="distanceReadout"></div>
-    <button type="button" class="btn" onclick="startScan()">SCAN MY AREA</button>
-  </div>
+    <!-- Error state -->
+    <div id="errorState" class="state-panel">
+      <div id="errorLines"></div>
+      <button type="button" class="cmd-btn" onclick="startScan()">[[[ EXECUTE SCAN ]]]</button>
+    </div>
 
-  <!-- Error state -->
-  <div id="errorState" class="state-panel">
-    <div class="error-icon">&#x26A0;</div>
-    <div class="error-text" id="errorText"></div>
-    <button type="button" class="btn" onclick="startScan()">SCAN MY AREA</button>
-  </div>
-
-  <hr class="section-divider" aria-hidden="true">
-
-  <section class="how-it-works" aria-label="How it works">
-    <h2>HOW IT WORKS</h2>
-    <ol>
-      <li>We check your location using the latest Slimelight technology.</li>
-      <li>We scan for the nearest bridges, underpasses and drains for cybergoth dens.</li>
-      <li>We assess the probability of UV dreadlock activity.</li>
-      <li>You receive a warning, or blessed silence.</li>
-    </ol>
-  </section>
-
-  <hr class="section-divider" aria-hidden="true">
-
-  <p class="footer-disclaimer">*No Polish goths were harmed in the making of this website</p>
-
+    <p class="footer-line">STATE AUTHORITIES ARE NOT RESPONSIBLE FOR NEON-RELATED INCIDENTS</p>
+  </main>
 </div>
 
 <script>
 /* ============================================================
-   CYBERGOTH EXPOSURE WARNING SYSTEM — Core Logic
+   GOTHRAD — Terminal animation & core logic
    ============================================================ */
 
-const WARNING_LEVELS = [
-  { maxDist: 50,   level: 'CRITICAL', cls: 'critical', msg: 'A cybergoth is directly beneath you. Check under your feet for neon dreadlocks.' },
-  { maxDist: 150,  level: 'SEVERE',   cls: 'severe',   msg: 'Extreme cybergoth proximity detected. Avoid eye contact.' },
-  { maxDist: 350,  level: 'HIGH',     cls: 'high',     msg: 'A cybergoth has been detected nearby. Do not approach.' },
-  { maxDist: 600,  level: 'ELEVATED', cls: 'elevated', msg: 'Cybergoth activity in the area. Stay alert.' },
-  { maxDist: 1000, level: 'LOW',     cls: 'low',     msg: 'Faint cybergoth readings. You are probably fine.' }
-];
-
-const CLEAR_LEVEL = {
-  level: 'CLEAR',
-  cls: 'clear',
-  msg: 'No cybergoths detected. You are safe... for now.'
+var GOTHRAD = {
+  banner: [
+    '  /$$$$$$   /$$$$$$  /$$$$$$$$ /$$   /$$ /$$$$$$$   /$$$$$$  /$$$$$$$ ',
+    ' /$$__  $$ /$$__  $$|__  $$__/| $$  | $$| $$__  $$ /$$__  $$| $$__  $$',
+    '| $$  \\__/| $$  \\ $$   | $$   | $$  | $$| $$  \\ $$| $$  \\ $$| $$  \\ $$',
+    '| $$ /$$$$| $$  | $$   | $$   | $$$$$$$$| $$$$$$$/| $$$$$$$$| $$  | $$',
+    '| $$|_  $$| $$  | $$   | $$   | $$__  $$| $$__  $$| $$__  $$| $$  | $$',
+    '| $$  \\ $$| $$  | $$   | $$   | $$  | $$| $$  \\ $$| $$  | $$| $$  | $$',
+    '|  $$$$$$/|  $$$$$$/   | $$   | $$  | $$| $$  | $$| $$  | $$| $$$$$$$/',
+    ' \\______/  \\______/    |__/   |__/  |__/|__/  |__/|__/  |__/|_______/ ',
+    '',
+    '===============================================',
+    '     /// GOTHRAD V3.1 ///',
+    '',
+    'CYBERGOTH PROXIMITY MONITORING TERMINAL',
+    'INDUSTRIAL SUBCULTURE DETECTION ARRAY',
+    '===============================================',
+    ''
+  ],
+  introLines: [
+    'DJPF PROTOCOL INITIALISED....',
+    'BOOT GOTHRAD V3.1..............',
+    'DEPLOYING SMOKE................'
+  ],
+  fillStream: 'GOTHNEET2015HOWFASTCANYOUSAYIT',
+  scanLines: [
+    'CALIBRATING NEON DETECTION MODULE..........',
+    'INITIALISING GOTHRAD SENSOR GRID..........',
+    'MEASURING GOGGLE REFLECTION LEVELS.........',
+    'DETECTING UV REACTIVE MATERIALS............'
+  ]
 };
 
+var WARNING_LEVELS = [
+  { maxDist: 50,   level: 'CRITICAL', msg: 'ARE YOU IN CYBERDOG? CHECK YOUR BOOTS FOR DREADLOCKS.' },
+  { maxDist: 150,  level: 'SEVERE',   msg: 'EXTREME CYBERGOTH PROXIMITY. AVOID EYE CONTACT.' },
+  { maxDist: 350,  level: 'HIGH',     msg: 'NEON SATURATION RISING. PROBABILITY OF GLOWSTICK DEPLOYMENT ELEVATED.' },
+  { maxDist: 600,  level: 'ELEVATED', msg: 'CYBERGOTH ACTIVITY IN AREA. STAY ALERT.' },
+  { maxDist: 1000, level: 'LOW',      msg: 'FAINT CYBERGOTH READINGS. PROBABLY FINE.' }
+];
+
+var CLEAR_LEVEL = {
+  level: 'CLEAR',
+  msg: 'NO CYBERGOTHS DETECTED. YOU ARE SAFE. FOR NOW.'
+};
+
+/* Race condition: Overpass may return before scan animation finishes */
+var scanAnimDone = false;
+var pendingDisplayFn = null;
+
+/* Timing constants */
+var INTRO_CHAR_SPEED = 85;
+var INTRO_LINE_DELAY = 200;
+var FILL_LINE_DELAY  = 60;
+
+/* ============================================================
+   State management
+   ============================================================ */
 function showState(stateId) {
-  ['initialState', 'scanState', 'resultState', 'errorState'].forEach(function(id) {
-    var el = document.getElementById(id);
-    el.classList.toggle('active', id === stateId);
+  ['initialState', 'scanState', 'errorState'].forEach(function(id) {
+    document.getElementById(id).classList.toggle('active', id === stateId);
   });
 }
 
-function setScanLabel(text) {
-  document.getElementById('scanLabel').textContent = text + '...';
+/* ============================================================
+   Typewriter helpers
+   ============================================================ */
+
+/* typewriter: animates text into an existing element */
+function typewriter(el, text, speed, callback) {
+  el.innerHTML = '';
+  var textSpan   = document.createElement('span');
+  var cursorSpan = document.createElement('span');
+  cursorSpan.className = 'cursor';
+  cursorSpan.setAttribute('aria-hidden', 'true');
+  el.appendChild(textSpan);
+  el.appendChild(cursorSpan);
+  var i = 0;
+  function tick() {
+    if (i < text.length) {
+      textSpan.textContent += text[i];
+      i++;
+      setTimeout(tick, speed);
+    } else {
+      cursorSpan.remove();
+      if (callback) callback();
+    }
+  }
+  tick();
 }
 
-function startScan() {
-  showState('scanState');
-  setScanLabel('Acquiring coordinates');
+/* typewriterSlow: creates a new .line div, appends to container, types into it */
+function typewriterSlow(container, text, speed, callback) {
+  var line       = document.createElement('div');
+  line.className = 'line';
+  var textSpan   = document.createElement('span');
+  var cursorSpan = document.createElement('span');
+  cursorSpan.className = 'cursor';
+  cursorSpan.setAttribute('aria-hidden', 'true');
+  line.appendChild(textSpan);
+  line.appendChild(cursorSpan);
+  container.appendChild(line);
+  var i = 0;
+  function tick() {
+    if (i < text.length) {
+      textSpan.textContent += text[i];
+      i++;
+      setTimeout(tick, speed);
+    } else {
+      cursorSpan.remove();
+      if (callback) callback();
+    }
+  }
+  tick();
+}
 
-  if (!navigator.geolocation) {
-    showError('Your browser does not support geolocation. The cybergoths remain undetected.');
+/* ============================================================
+   Boot sequence
+   ============================================================ */
+function runIntroSequence() {
+  var overlay     = document.getElementById('bootOverlay');
+  var terminal    = document.getElementById('bootTerminal');
+  var siteContent = document.getElementById('siteContent');
+
+  if (!overlay || !terminal) {
+    if (siteContent) siteContent.classList.add('visible');
+    animateBootSequence();
     return;
   }
 
+  terminal.innerHTML = '';
+  var lineIndex = 0;
+
+  /* Phase 1: Type the three boot lines */
+  function typeNextIntroLine() {
+    if (lineIndex >= GOTHRAD.introLines.length) {
+      fillScreenWithPrint();
+      return;
+    }
+    typewriterSlow(terminal, GOTHRAD.introLines[lineIndex], INTRO_CHAR_SPEED, function() {
+      lineIndex++;
+      setTimeout(typeNextIntroLine, INTRO_LINE_DELAY);
+    });
+  }
+
+  /* Phase 2: Flood screen with GOTHNEET text */
+  function fillScreenWithPrint() {
+    overlay.classList.add('fill-phase');
+    terminal.innerHTML = ''; /* Clear intro lines — fill from top */
+
+    var stream = GOTHRAD.fillStream;
+    /* Generate a line long enough to span any viewport width */
+    var bigLine = '';
+    while (bigLine.length < 500) bigLine += stream;
+
+    var linesAdded   = 0;
+    var extraCount   = 0;
+    var filledViewport = false;
+
+    function addFillLine() {
+      var line       = document.createElement('div');
+      line.className = 'line fill-stream';
+      line.textContent = bigLine;
+      terminal.appendChild(line);
+      linesAdded++;
+
+      /* Check if terminal content now fills the viewport */
+      if (!filledViewport && terminal.offsetHeight >= window.innerHeight) {
+        filledViewport = true;
+      }
+
+      if (!filledViewport) {
+        /* Keep adding until viewport is full */
+        setTimeout(addFillLine, FILL_LINE_DELAY);
+      } else if (extraCount < 5) {
+        /* Add 5 extra lines for visual comfort */
+        extraCount++;
+        setTimeout(addFillLine, FILL_LINE_DELAY);
+      } else {
+        /* Brief pause then reveal */
+        setTimeout(slideDownAndReveal, 300);
+      }
+    }
+
+    addFillLine();
+  }
+
+  /* Phase 3: Slide GOTHNEET content down off screen, reveal site */
+  function slideDownAndReveal() {
+    overlay.classList.add('hiding');
+    setTimeout(function() {
+      overlay.classList.add('hidden');
+      if (siteContent) siteContent.classList.add('visible');
+      animateBootSequence();
+    }, 900); /* slightly longer than the 0.8s CSS transition */
+  }
+
+  /* Start after a brief initial pause */
+  setTimeout(typeNextIntroLine, 400);
+}
+
+/* Rebuild ASCII banner from GOTHRAD.banner data */
+function animateBootSequence() {
+  var bannerEl = document.getElementById('asciiBanner');
+  if (!bannerEl) return;
+  bannerEl.innerHTML = '';
+  var logoWrap  = document.createElement('div');
+  logoWrap.className = 'ascii-logo';
+  var titleWrap = document.createElement('div');
+  titleWrap.className = 'banner-title';
+  for (var i = 0; i < GOTHRAD.banner.length; i++) {
+    var line       = document.createElement('div');
+    line.className = 'line';
+    line.textContent = GOTHRAD.banner[i];
+    if (i < 9) {
+      logoWrap.appendChild(line);
+    } else {
+      titleWrap.appendChild(line);
+    }
+  }
+  bannerEl.appendChild(logoWrap);
+  bannerEl.appendChild(titleWrap);
+}
+
+/* ============================================================
+   Scan animation — types 4 lines then lock-acquired
+   ============================================================ */
+function runScanAnimation(onComplete) {
+  var container = document.getElementById('scanLines');
+  container.innerHTML = '';
+  var lines = GOTHRAD.scanLines;
+  var idx   = 0;
+
+  function next() {
+    if (idx >= lines.length) {
+      /* All scan lines done — add blank line then type lock-acquired */
+      var blank = document.createElement('div');
+      blank.className = 'line';
+      blank.innerHTML = '&nbsp;';
+      container.appendChild(blank);
+
+      var lockDiv = document.createElement('div');
+      lockDiv.className = 'line';
+      container.appendChild(lockDiv);
+
+      typewriter(lockDiv, 'CYBERGOTH SIGNATURE LOCK ACQUIRED..........', 22, function() {
+        lockDiv.classList.add('lock-acquired-pulse');
+        scanAnimDone = true;
+        /* Fire any result that arrived while we were animating */
+        if (pendingDisplayFn) {
+          var fn = pendingDisplayFn;
+          pendingDisplayFn = null;
+          fn();
+        }
+        if (onComplete) onComplete();
+      });
+      return;
+    }
+
+    var line = document.createElement('div');
+    line.className = 'line';
+    container.appendChild(line);
+    typewriter(line, lines[idx], 22, function() {
+      idx++;
+      next();
+    });
+  }
+
+  next();
+}
+
+/* ============================================================
+   Result display — appends into #scanLines (scan state persists)
+   ============================================================ */
+function displayResult(distanceMetres) {
+  var doDisplay = function() {
+    var info = CLEAR_LEVEL;
+    if (distanceMetres !== Infinity) {
+      for (var i = 0; i < WARNING_LEVELS.length; i++) {
+        if (distanceMetres <= WARNING_LEVELS[i].maxDist) {
+          info = WARNING_LEVELS[i];
+          break;
+        }
+      }
+    }
+
+    var distanceText = (distanceMetres !== Infinity && distanceMetres <= 1000)
+      ? 'NEAREST CYBERGOTH: ' + Math.round(distanceMetres) + 'M'
+      : 'NEAREST CYBERGOTH: NONE WITHIN 1KM';
+
+    /* Stop lock-acquired pulse */
+    var lockLine = document.querySelector('.lock-acquired-pulse');
+    if (lockLine) lockLine.classList.remove('lock-acquired-pulse');
+
+    var container = document.getElementById('scanLines');
+
+    /* Blank separator before result lines */
+    var blank = document.createElement('div');
+    blank.className = 'line';
+    blank.innerHTML = '&nbsp;';
+    container.appendChild(blank);
+
+    var statusLine = document.createElement('div');
+    statusLine.className = 'line';
+    container.appendChild(statusLine);
+
+    var msgLine = document.createElement('div');
+    msgLine.className = 'line';
+    container.appendChild(msgLine);
+
+    var distLine = document.createElement('div');
+    distLine.className = 'line';
+    container.appendChild(distLine);
+
+    typewriter(statusLine, 'STATUS: ' + info.level + '.', 35, function() {
+      typewriter(msgLine, info.msg, 25, function() {
+        typewriter(distLine, distanceText, 20, function() {
+          document.getElementById('rescanBtn').style.display = '';
+        });
+      });
+    });
+  };
+
+  /* If scan animation already done, display immediately; otherwise queue */
+  if (scanAnimDone) {
+    doDisplay();
+  } else {
+    pendingDisplayFn = doDisplay;
+  }
+}
+
+/* ============================================================
+   Error display
+   ============================================================ */
+function runErrorAnimation(msg) {
+  var container = document.getElementById('errorLines');
+  container.innerHTML = '';
+  var icon = document.createElement('div');
+  icon.className = 'line error-icon';
+  icon.textContent = '[!] ';
+  container.appendChild(icon);
+  var line = document.createElement('div');
+  line.className = 'line';
+  container.appendChild(line);
+  typewriter(line, msg, 30, null);
+}
+
+/* Helper: show error (respects race condition) */
+function triggerError(msg) {
+  var doError = function() {
+    showState('errorState');
+    runErrorAnimation(msg);
+  };
+  if (scanAnimDone) {
+    doError();
+  } else {
+    pendingDisplayFn = doError;
+  }
+}
+
+/* ============================================================
+   Scan entry point
+   ============================================================ */
+function startScan() {
+  scanAnimDone    = false;
+  pendingDisplayFn = null;
+  document.getElementById('rescanBtn').style.display = 'none';
+  showState('scanState');
+
+  if (!navigator.geolocation) {
+    /* Animation runs, then immediately shows error after lock-acquired */
+    runScanAnimation(function() {
+      showState('errorState');
+      runErrorAnimation('BROWSER DOES NOT SUPPORT GEOLOCATION. CYBERGOTHS REMAIN UNDETECTED.');
+    });
+    return;
+  }
+
+  runScanAnimation(null);
+
   navigator.geolocation.getCurrentPosition(
     function(position) {
-      var lat = position.coords.latitude;
-      var lon = position.coords.longitude;
-      setScanLabel('Scanning for bridge-dwellers');
-      queryOverpass(lat, lon);
+      queryOverpass(position.coords.latitude, position.coords.longitude);
     },
     function() {
-      showError('The cybergoths have blocked your GPS signal.');
+      triggerError('CYBERGOTHS HAVE BLOCKED GPS SIGNAL.');
     },
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
 }
 
+/* ============================================================
+   Overpass API — PRESERVED: do not modify query logic
+   ============================================================ */
 function queryOverpass(lat, lon) {
   var radius = 1000;
   var query = '[out:json][timeout:15];'
@@ -536,28 +780,35 @@ function queryOverpass(lat, lon) {
     + 'node["man_made"="bridge"](around:' + radius + ',' + lat + ',' + lon + ');'
     + 'way["man_made"="bridge"](around:' + radius + ',' + lat + ',' + lon + '););'
     + 'out center;';
+
   var xhr = new XMLHttpRequest();
   xhr.open('POST', 'https://overpass-api.de/api/interpreter', true);
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   xhr.timeout = 20000;
+
   xhr.onload = function() {
     if (xhr.status >= 200 && xhr.status < 300) {
       try {
         var data = JSON.parse(xhr.responseText);
         processResults(lat, lon, data.elements || []);
       } catch (e) {
-        showError('Cybergoth interference is disrupting the scan.');
+        triggerError('INTERFERENCE DISRUPTING SCAN.');
       }
     } else {
-      showError('Cybergoth interference is disrupting the scan.');
+      triggerError('INTERFERENCE DISRUPTING SCAN.');
     }
   };
+
   xhr.onerror = xhr.ontimeout = function() {
-    showError('Cybergoth interference is disrupting the scan.');
+    triggerError('INTERFERENCE DISRUPTING SCAN.');
   };
+
   xhr.send('data=' + encodeURIComponent(query));
 }
 
+/* ============================================================
+   processResults — PRESERVED
+   ============================================================ */
 function processResults(userLat, userLon, elements) {
   var nearest = Infinity;
   for (var i = 0; i < elements.length; i++) {
@@ -576,8 +827,11 @@ function processResults(userLat, userLon, elements) {
   displayResult(nearest);
 }
 
+/* ============================================================
+   haversine — PRESERVED
+   ============================================================ */
 function haversine(lat1, lon1, lat2, lon2) {
-  var R = 6371000;
+  var R    = 6371000;
   var toRad = Math.PI / 180;
   var dLat = (lat2 - lat1) * toRad;
   var dLon = (lon2 - lon1) * toRad;
@@ -587,34 +841,12 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-function displayResult(distanceMetres) {
-  var info = CLEAR_LEVEL;
-  if (distanceMetres !== Infinity) {
-    for (var i = 0; i < WARNING_LEVELS.length; i++) {
-      if (distanceMetres <= WARNING_LEVELS[i].maxDist) {
-        info = WARNING_LEVELS[i];
-        break;
-      }
-    }
-  }
-  var levelEl = document.getElementById('warningLevel');
-  levelEl.textContent = info.level;
-  levelEl.className = 'warning-level level-' + info.cls;
-  var msgEl = document.getElementById('warningMessage');
-  msgEl.textContent = info.msg;
-  var readoutEl = document.getElementById('distanceReadout');
-  if (distanceMetres !== Infinity && distanceMetres <= 1000) {
-    readoutEl.innerHTML = 'Nearest cybergoth: <span>' + Math.round(distanceMetres) + 'm</span>';
-  } else {
-    readoutEl.innerHTML = 'Nearest cybergoth: <span>None within 1km</span>';
-  }
-  showState('resultState');
-}
-
-function showError(message) {
-  document.getElementById('errorText').textContent = message;
-  showState('errorState');
-}
+/* ============================================================
+   Init
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function() {
+  runIntroSequence();
+});
 </script>
 
 </body>
